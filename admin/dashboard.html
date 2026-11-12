@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Dashboard | Paper Trails</title>
+
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+
+      <!-- BRAND -->
+      <a href="dashboard.html" class="sidebar-brand">
+        <img src="assets/logo.png" alt="Paper Trails Logo">
+
+        <div>
+          <h2>Paper Trails</h2>
+          <p>Admin Panel</p>
+        </div>
+      </a>
+
+      <!-- NAVIGATION -->
+      <nav class="sidebar-nav">
+
+        <a href="dashboard.html" class="nav-link active">
+          <span class="nav-icon">⌂</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="books.html" class="nav-link">
+          <span class="nav-icon">📖</span>
+          <span>Books</span>
+        </a>
+
+        <a href="genres.html" class="nav-link">
+          <span class="nav-icon">🏷</span>
+          <span>Genres & Filters</span>
+        </a>
+
+        <a href="dashboard.html#submissions" class="nav-link">
+          <span class="nav-icon">✉</span>
+          <span>Story Submissions</span>
+          <span class="notification-count" id="submissionCount">0</span>
+        </a>
+
+        <a href="settings.html" class="nav-link">
+          <span class="nav-icon">⚙</span>
+          <span>Settings</span>
+        </a>
+
+      </nav>
+
+      <!-- SIDEBAR DECORATION -->
+      <div class="sidebar-decoration">
+        <span>☕</span>
+        <p>A little magic<br>between the pages.</p>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+      <!-- TOPBAR -->
+      <header class="admin-topbar">
+
+        <div class="topbar-left">
+
+          <button
+            type="button"
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <a href="dashboard.html" class="topbar-mobile-brand">
+            <img src="assets/logo.png" alt="Paper Trails">
+            <span>Paper Trails</span>
+          </a>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+          <!-- NOTIFICATIONS -->
+          <button
+            class="notification-button"
+            type="button"
+            aria-label="Notifications"
+          >
+            ♧
+            <span class="notification-dot"></span>
+          </button>
+
+          <!-- ADMIN PROFILE -->
+          <div class="admin-profile">
+
+            <div class="profile-avatar">A</div>
+
+            <div class="profile-info">
+              <strong>Admin</strong>
+              <span>Administrator</span>
+            </div>
+
+          </div>
+
+          <!-- LOGOUT -->
+          <button
+            id="logoutButton"
+            class="logout-button"
+            type="button"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- DASHBOARD CONTENT -->
+      <div class="dashboard-content">
+
+        <!-- WELCOME -->
+        <section class="dashboard-welcome">
+
+          <h1>Welcome back, Admin! 👋</h1>
+
+          <p>
+            Manage books, genres, and read submitted stories
+            from one place.
+          </p>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats-grid">
+
+          <!-- TOTAL BOOKS -->
+          <article class="stat-card stat-books">
+
+            <div class="stat-icon">📖</div>
+
+            <div class="stat-details">
+              <p>Total Books</p>
+              <h2 id="totalBooks">0</h2>
+              <span class="stat-note">Book library</span>
+            </div>
+
+          </article>
+
+
+          <!-- GENRES -->
+          <article class="stat-card stat-genres">
+
+            <div class="stat-icon">🏷️</div>
+
+            <div class="stat-details">
+              <p>Genres</p>
+              <h2 id="totalGenres">0</h2>
+              <span class="stat-note">Book categories</span>
+            </div>
+
+          </article>
+
+
+          <!-- SUBMISSIONS -->
+          <article class="stat-card stat-submissions">
+
+            <div class="stat-icon">✉️</div>
+
+            <div class="stat-details">
+              <p>Story Submissions</p>
+              <h2 id="totalSubmissions">0</h2>
+              <span class="stat-note">Visitor stories</span>
+            </div>
+
+          </article>
+
+
+          <!-- STORAGE -->
+          <article class="stat-card stat-storage">
+
+            <div class="stat-icon">▱</div>
+
+            <div class="stat-details">
+
+              <p>Storage (PDFs)</p>
+
+              <h2>
+                <span id="usedStorage">0 MB</span>
+                <small>/ 125 MB</small>
+              </h2>
+
+              <div class="storage-progress">
+                <span id="storageProgress"></span>
+              </div>
+
+            </div>
+
+          </article>
+
+        </section>
+
+
+        <!-- DASHBOARD PANELS -->
+        <section class="dashboard-panels">
+
+          <!-- BOOKS PANEL -->
+          <article class="panel books-panel" id="books">
+
+            <div class="panel-header">
+
+              <h2>
+                <span>📚</span>
+                Books
+              </h2>
+
+              <button
+                class="primary-button"
+                id="addBookButton"
+                type="button"
+              >
+                + Add New Book
+              </button>
+
+            </div>
+
+
+            <!-- BOOKS TABLE -->
+            <div class="table-wrapper">
+
+              <table class="books-table">
+
+                <thead>
+                  <tr>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Age Group</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody id="booksTableBody">
+
+                  <tr>
+                    <td colspan="6" class="empty-state">
+                      No books added yet.
+                    </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </article>
+
+
+          <!-- RIGHT COLUMN -->
+          <div class="dashboard-right-column">
+
+
+            <!-- STORY SUBMISSIONS -->
+            <article
+              class="panel submissions-panel"
+              id="submissions"
+            >
+
+              <div class="panel-header">
+
+                <h2>
+                  <span>✉️</span>
+                  Recent Story Submissions
+                </h2>
+
+                <a
+                  href="#submissions"
+                  class="view-all-link"
+                >
+                  View All →
+                </a>
+
+              </div>
+
+
+              <div
+                class="recent-submissions-list"
+                id="recentSubmissionsList"
+              >
+
+                <div class="empty-state">
+                  No story submissions yet.
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <!-- QUICK ACTIONS -->
+            <article class="panel quick-actions-panel">
+
+              <div class="panel-header">
+
+                <h2>
+                  <span>⚡</span>
+                  Quick Actions
+                </h2>
+
+              </div>
+
+
+              <div class="quick-actions-grid">
+
+                <button
+                  class="quick-action"
+                  id="uploadPdfButton"
+                  type="button"
+                >
+                  <span>⇧</span>
+                  <strong>Upload PDF</strong>
+                  <small>Max 5, up to 25 MB</small>
+                </button>
+
+
+                <button
+                  class="quick-action"
+                  id="updateCoverButton"
+                  type="button"
+                >
+                  <span>▧</span>
+                  <strong>Update Cover</strong>
+                  <small>Any book</small>
+                </button>
+
+
+                <button
+                  class="quick-action"
+                  id="manageGenresButton"
+                  type="button"
+                >
+                  <span>◇</span>
+                  <strong>Manage Genres</strong>
+                  <small>Add / Edit / Delete</small>
+                </button>
+
+              </div>
+
+            </article>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- JAVASCRIPT -->
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>

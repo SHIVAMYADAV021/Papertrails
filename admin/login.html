@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Paper Trails</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+  <main class="login-page">
+    <section class="login-card">
+
+      <img src="assets/logo.png" alt="Paper Trails Logo" class="logo">
+
+      <p class="welcome">PAPER TRAILS • ADMINISTRATION</p>
+      <h1>Welcome Back!</h1>
+      <p class="subtitle">Sign in to manage your books and stories.</p>
+
+      <form id="loginForm">
+
+        <div class="form-group">
+          <label for="adminId">Admin ID</label>
+          <input
+            type="text"
+            id="adminId"
+            name="adminId"
+            placeholder="Enter your Admin ID"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <p id="loginMessage" class="message" aria-live="polite"></p>
+
+        <button type="submit" id="loginButton">
+          Login to Admin Panel
+        </button>
+
+      </form>
+
+      <p class="security-note">
+        <span>🔒</span> Restricted access · Authorized administrator only
+      </p>
+
+      <a href="../index.html" class="back-link">
+        ← Back to Paper Trails
+      </a>
+
+    </section>
+  </main>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books Management | Paper Trails</title>
+
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/books.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+
+    <a href="dashboard.html" class="sidebar-brand">
+      <img src="assets/logo.png" alt="Paper Trails">
+      <div>
+        <h2>Paper Trails</h2>
+        <p>Admin Panel</p>
+      </div>
+    </a>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-link">⌂ Dashboard</a>
+      <a href="books.html" class="nav-link active">📖 Books</a>
+      <a href="dashboard.html#genres" class="nav-link">🏷 Genres & Filters</a>
+      <a href="dashboard.html#submissions" class="nav-link">✉ Story Submissions</a>
+    </nav>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main">
+
+    <!-- TOPBAR -->
+    <header class="admin-topbar">
+
+      <div class="topbar-left">
+
+        <button
+          type="button"
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <a href="dashboard.html" class="topbar-mobile-brand">
+          <img src="assets/logo.png" alt="Paper Trails">
+          <span>Paper Trails</span>
+        </a>
+
+      </div>
+
+      <div class="topbar-right">
+
+        <div class="admin-profile">
+          <div class="profile-avatar">A</div>
+
+          <div class="profile-info">
+            <strong>Admin</strong>
+            <span>Administrator</span>
+          </div>
+        </div>
+
+        <button
+          id="logoutButton"
+          class="logout-button"
+          type="button"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- BOOKS PAGE -->
+    <section class="books-page">
+
+      <!-- PAGE HEADING -->
+      <div class="books-heading">
+
+        <div>
+          <h1>Book Management</h1>
+          <p>Manage your Paper Trails library.</p>
+        </div>
+
+        <button
+          class="primary-button"
+          id="addBookButton"
+          type="button"
+        >
+          + Add New Book
+        </button>
+
+      </div>
+
+
+      <!-- STATISTICS -->
+      <div class="stats-grid">
+
+        <article class="stat-card stat-books">
+          <div class="stat-details">
+            <p>Total Books</p>
+            <h2 id="totalBooks">0</h2>
+          </div>
+        </article>
+
+        <article class="stat-card stat-genres">
+          <div class="stat-details">
+            <p>Free Books</p>
+            <h2 id="freeBooks">0</h2>
+          </div>
+        </article>
+
+        <article class="stat-card stat-submissions">
+          <div class="stat-details">
+            <p>Premium Books</p>
+            <h2 id="paidBooks">0</h2>
+          </div>
+        </article>
+
+      </div>
+
+
+      <!-- BOOKS TABLE -->
+      <article class="books-panel">
+
+        <div class="books-toolbar">
+
+          <input
+            id="bookSearch"
+            type="search"
+            placeholder="Search books or authors..."
+          >
+
+          <select id="genreFilter">
+            <option value="">All Genres</option>
+            <option>Fantasy</option>
+            <option>Adventure</option>
+            <option>Fiction</option>
+            <option>Mystery</option>
+            <option>Romance</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+
+          <select id="typeFilter">
+            <option value="">All Types</option>
+            <option value="Free">Free</option>
+            <option value="Premium">Premium</option>
+          </select>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <div class="table-wrapper">
+
+          <table class="books-table">
+
+            <thead>
+              <tr>
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Age Group</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="booksTableBody">
+
+              <tr>
+                <td colspan="6" class="empty-state">
+                  No books added yet.
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- ADD / EDIT BOOK MODAL -->
+<div class="book-modal" id="bookModal">
+
+  <div class="book-modal-content">
+
+    <!-- MODAL HEADER -->
+    <div class="book-modal-header">
+
+      <h2 id="modalTitle">Add New Book</h2>
+
+      <button
+        type="button"
+        class="modal-close"
+        id="closeBookModal"
+        aria-label="Close modal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- BOOK FORM -->
+    <form class="book-form" id="bookForm">
+
+      <input type="hidden" id="bookId">
+
+
+      <!-- LEFT: COVER PREVIEW -->
+      <div class="book-cover-column">
+
+        <div class="cover-heading">
+          Book Cover (Thumbnail)
+        </div>
+
+        <div class="cover-preview-box">
+
+          <div class="cover-placeholder" id="coverPlaceholder">
+            <span>📚</span>
+            Cover preview will appear here
+          </div>
+
+          <img
+            id="coverPreview"
+            src=""
+            alt="Book cover preview"
+          >
+
+        </div>
+
+        <div class="image-size-card">
+          <strong>▣ Image Size (Recommended)</strong>
+          Width: 600 px<br>
+          Height: 900 px<br>
+          Aspect Ratio: 2:3
+        </div>
+
+        <ul class="cover-rules">
+          <li>Format: JPG, PNG, WEBP</li>
+          <li>Maximum file size: 5 MB</li>
+          <li>Recommended size: 600 × 900 px</li>
+        </ul>
+
+        <div class="cover-note">
+          <strong>ⓘ Note</strong><br>
+          Use a portrait book cover for the best display on your website.
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT: BOOK DETAILS -->
+      <div class="book-fields-column">
+
+        <label>
+          Title <span class="required-star">*</span>
+
+          <input
+            id="bookTitle"
+            type="text"
+            placeholder="Enter book title"
+            required
+            maxlength="150"
+          >
+        </label>
+
+
+        <label>
+          Author(s) <span class="required-star">*</span>
+
+          <input
+            id="bookAuthor"
+            type="text"
+            placeholder="Enter author name"
+            required
+            maxlength="100"
+          >
+        </label>
+
+
+        <label>
+          Description
+
+          <textarea
+            id="bookDescription"
+            placeholder="Write a short description about the book..."
+          ></textarea>
+        </label>
+
+
+        <!-- SELECT FIELDS -->
+        <div class="book-select-row">
+
+          <label>
+            Genre <span class="required-star">*</span>
+
+            <select id="bookGenre" required>
+              <option value="">Select genre</option>
+              <option>Fantasy</option>
+              <option>Adventure</option>
+              <option>Fiction</option>
+              <option>Mystery</option>
+              <option>Romance</option>
+              <option>Education</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+
+          <label>
+            Age Group <span class="required-star">*</span>
+
+            <select id="bookAgeGroup" required>
+              <option value="">Select age</option>
+              <option>Ages 3–6</option>
+              <option>Ages 7–13</option>
+              <option>Ages 14–17</option>
+              <option>Adults</option>
+              <option>All Ages</option>
+            </select>
+          </label>
+
+
+          <label>
+            Type <span class="required-star">*</span>
+
+            <select id="bookType" required>
+              <option value="Free">Free</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </label>
+
+        </div>
+
+
+        <!-- COVER UPLOAD -->
+        <label>
+          Book Cover <span class="required-star">*</span>
+
+          <input
+            id="bookCover"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+          >
+        </label>
+
+
+        <!-- PDF UPLOAD -->
+        <div>
+
+          <div class="cover-heading">Book PDF</div>
+
+          <div class="pdf-upload-card">
+
+            <input
+              id="bookPdf"
+              type="file"
+              accept="application/pdf"
+            >
+
+            <small id="currentPdf">No PDF selected</small>
+
+          </div>
+
+          <div class="pdf-limit">
+            PDF limit: Maximum 5 books | Maximum file size: 25 MB
+          </div>
+
+        </div>
+
+
+        <!-- FORM ACTIONS -->
+        <div class="book-form-actions">
+
+          <button
+            type="button"
+            id="cancelBookModal"
+            class="cancel-book"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="save-book">
+            ✓ Save Book
+          </button>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- COVER PREVIEW PLACEHOLDER -->
+<script>
+  const preview = document.getElementById("coverPreview");
+  const placeholder = document.getElementById("coverPlaceholder");
+
+  function updateCoverPlaceholder() {
+
+    if (!preview || !placeholder) return;
+
+    const hasImage = preview.getAttribute("src")?.trim() !== "";
+
+    placeholder.style.display = hasImage ? "none" : "block";
+
+  }
+
+  if (preview) {
+
+    preview.addEventListener("load", updateCoverPlaceholder);
+    preview.addEventListener("error", updateCoverPlaceholder);
+
+    const observer = new MutationObserver(updateCoverPlaceholder);
+
+    observer.observe(preview, {
+      attributes: true,
+      attributeFilter: ["src"]
+    });
+
+    updateCoverPlaceholder();
+
+  }
+</script>
+
+
+<!-- JAVASCRIPT -->
+<script src="js/dashboard.js"></script>
+<script src="js/books.js"></script>
+
+</body>
+</html>

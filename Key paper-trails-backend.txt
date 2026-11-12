@@ -1,0 +1,6 @@
+Key: paper-trails-backend
+
+Access key ID: tid_bZiZpfl_MDEmLBsTHCasJrYrNLDLUWnvQEZbgijYWKYnEpGciC
+Secret access key :tsec_s3fqdbN8qq-IZHMgObWXCBbity9gq_reuDYhrp_4acg+ynnyc4fdFRvbujJwuPyH0D9tSu
+Endpoint URL S3 :https://t3.storage.dev
+Endpoint URL IAM :https://iam.storage.dev
