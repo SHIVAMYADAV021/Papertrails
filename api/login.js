@@ -30,7 +30,8 @@ module.exports = (req, res) => {
 
   const { adminId, password } = req.body || {};
 
-  const correctId = process.env.ADMIN_ID;
+  // Updated Admin ID environment variable
+  const correctId = process.env.PAPERTRAILS_ADMIN_ID;
   const correctPassword = process.env.ADMIN_PASSWORD;
   const sessionSecret = process.env.SESSION_SECRET;
 
