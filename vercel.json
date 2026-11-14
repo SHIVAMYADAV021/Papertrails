@@ -9,6 +9,14 @@
     {
       "source": "/api/admin/submissions",
       "destination": "/api/submissions-handler?mode=admin"
+    },
+    {
+      "source": "/api/admin-check",
+      "destination": "/api/config-check"
+    },
+    {
+      "source": "/api/env-check",
+      "destination": "/api/config-check"
     }
   ]
 }
