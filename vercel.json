@@ -1,0 +1,14 @@
+
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/submissions",
+      "destination": "/api/submissions-handler?mode=visitor"
+    },
+    {
+      "source": "/api/admin/submissions",
+      "destination": "/api/submissions-handler?mode=admin"
+    }
+  ]
+}
