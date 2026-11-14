@@ -1,0 +1,1146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Story Submissions | Paper Trails</title>
+
+  <link rel="stylesheet" href="css/dashboard.css">
+
+  <style>
+    :root {
+      --green: #073b36;
+      --green-light: #e5f0eb;
+      --cream: #f7f4e9;
+      --white: #ffffff;
+      --berry: #a91f50;
+      --berry-light: #f9e8ee;
+      --gold: #f1d77d;
+      --text: #183d38;
+      --muted: #78837e;
+      --border: #e8e1d3;
+      --red: #c43d42;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    .submission-page {
+      padding: 30px;
+      max-width: 1600px;
+      margin: auto;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .page-heading h1 {
+      margin: 0 0 8px;
+      font-size: 29px;
+      color: var(--green);
+    }
+
+    .page-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .total-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px 23px;
+      min-width: 190px;
+    }
+
+    .total-icon {
+      width: 43px;
+      height: 43px;
+      border-radius: 12px;
+      background: var(--berry-light);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+
+    .total-card span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .total-card strong {
+      display: block;
+      font-size: 25px;
+      margin-top: 3px;
+      color: var(--green);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .toolbar input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .toolbar select {
+      min-width: 145px;
+    }
+
+    .toolbar input:focus,
+    .toolbar select:focus {
+      border-color: var(--berry);
+    }
+
+    .submission-layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.95fr) minmax(0, 1.4fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .panel-heading {
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-heading h2 {
+      font-size: 16px;
+      margin: 0;
+      color: var(--green);
+    }
+
+    .panel-heading span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .submission-list {
+      max-height: 650px;
+      overflow-y: auto;
+    }
+
+    .submission-item {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #eee9df;
+      padding: 17px 19px;
+      display: flex;
+      text-align: left;
+      gap: 12px;
+      background: white;
+      cursor: pointer;
+      color: var(--text);
+      transition: background .2s;
+    }
+
+    .submission-item:hover {
+      background: #faf7f0;
+    }
+
+    .submission-item.selected {
+      background: var(--berry-light);
+      border-left: 4px solid var(--berry);
+      padding-left: 15px;
+    }
+
+    .item-icon {
+      width: 39px;
+      height: 39px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--green-light);
+      font-size: 19px;
+    }
+
+    .item-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .item-title {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+      margin-bottom: 5px;
+    }
+
+    .item-author {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .item-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .item-date {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 20px;
+      background: var(--berry-light);
+      color: var(--berry);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .status.reviewed {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .empty-state {
+      padding: 45px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .empty-state .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .detail-panel {
+      min-height: 450px;
+    }
+
+    .detail-content {
+      padding: 23px;
+    }
+
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .detail-title {
+      display: flex;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .detail-book-icon {
+      width: 49px;
+      height: 49px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      background: var(--green-light);
+      border-radius: 12px;
+      font-size: 25px;
+    }
+
+    .detail-title h2 {
+      font-size: 22px;
+      color: var(--green);
+      margin: 2px 0 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .detail-divider {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-section h3 {
+      color: var(--green);
+      font-size: 13px;
+      margin: 0 0 9px;
+    }
+
+    .email-box,
+    .story-box {
+      background: #faf8f2;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .story-box {
+      min-height: 230px;
+      white-space: pre-wrap;
+      font-family: Georgia, serif;
+      color: #384c43;
+    }
+
+    /* FIXED STORY ACTION BUTTONS */
+    .detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 23px;
+      width: 100%;
+    }
+
+    .detail-actions .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: auto !important;
+      min-width: 130px;
+      min-height: 46px;
+      padding: 0 20px;
+      margin: 0;
+      border-radius: 9px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      text-align: center;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .detail-actions .pdf-button {
+      background: var(--berry);
+      color: #ffffff;
+      border: 1px solid var(--berry);
+    }
+
+    .detail-actions .pdf-button:hover {
+      background: #87183e;
+      border-color: #87183e;
+    }
+
+    .detail-actions .delete-button {
+      background: #ffffff;
+      border: 1px solid var(--red);
+      color: var(--red);
+    }
+
+    .detail-actions .delete-button:hover {
+      background: #fff0f0;
+    }
+
+    .refresh-button {
+      background: var(--green);
+      color: white;
+      border-radius: 8px;
+      padding: 10px 15px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .message {
+      padding: 12px 15px;
+      border-radius: 9px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .message.error {
+      display: block;
+      color: #9d252b;
+      background: #fff0f0;
+    }
+
+    .message.success {
+      display: block;
+      color: var(--green);
+      background: var(--green-light);
+    }
+
+    .loading {
+      padding: 45px 15px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .submission-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .submission-list {
+        max-height: 420px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .submission-page {
+        padding: 18px 13px;
+      }
+
+      .page-heading h1 {
+        font-size: 23px;
+      }
+
+      .total-card {
+        width: 100%;
+      }
+
+      .toolbar {
+        flex-direction: column;
+      }
+
+      .toolbar input,
+      .toolbar select {
+        width: 100%;
+      }
+
+      .detail-content {
+        padding: 16px;
+      }
+
+      .detail-title h2 {
+        font-size: 18px;
+      }
+
+      .detail-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .detail-actions .action-button {
+        width: 100% !important;
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+
+    <a href="dashboard.html" class="sidebar-brand">
+      <img src="assets/logo.png" alt="Paper Trails">
+
+      <div>
+        <h2>Paper Trails</h2>
+        <p>Admin Panel</p>
+      </div>
+    </a>
+
+    <nav class="sidebar-nav">
+
+      <a href="dashboard.html" class="nav-link">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="books.html" class="nav-link">
+        <span class="nav-icon">📖</span>
+        <span>Books</span>
+      </a>
+
+      <a href="submissions.html" class="nav-link active">
+        <span class="nav-icon">✉</span>
+        <span>Story Submissions</span>
+        <span class="notification-count" id="submissionCount">0</span>
+      </a>
+
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <header class="admin-topbar">
+
+      <div class="topbar-left">
+
+        <button
+          type="button"
+          class="menu-toggle"
+          id="menuToggle"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <a href="dashboard.html" class="topbar-mobile-brand">
+          <img src="assets/logo.png" alt="Paper Trails">
+          <span>Paper Trails</span>
+        </a>
+
+      </div>
+
+      <div class="topbar-right">
+
+        <div class="admin-profile">
+          <div class="profile-avatar">A</div>
+          <div class="profile-info">
+            <strong>Admin</strong>
+            <span>Administrator</span>
+          </div>
+        </div>
+
+        <button id="logoutButton" class="logout-button" type="button">
+          Logout
+        </button>
+
+      </div>
+
+    </header>
+
+    <section class="submission-page">
+
+      <div class="page-heading">
+
+        <div>
+          <h1>✉ Story Submissions</h1>
+          <p>Read, manage and download stories from young authors.</p>
+        </div>
+
+        <div class="total-card">
+          <div class="total-icon">📚</div>
+          <div>
+            <span>Total Submissions</span>
+            <strong id="totalSubmissions">0</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="pageMessage" class="message"></div>
+
+      <div class="toolbar">
+
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Search by title, author or email..."
+          aria-label="Search submissions"
+        >
+
+        <select id="statusFilter" aria-label="Filter by status">
+          <option value="all">All Status</option>
+          <option value="new">New</option>
+          <option value="reviewed">Reviewed</option>
+        </select>
+
+        <button type="button" class="refresh-button" id="refreshButton">
+          ↻ Refresh
+        </button>
+
+      </div>
+
+      <div class="submission-layout">
+
+        <!-- SUBMISSION LIST -->
+        <section class="panel">
+
+          <div class="panel-heading">
+            <h2>Received Stories</h2>
+            <span id="listCount">0 stories</span>
+          </div>
+
+          <div id="submissionList" class="submission-list">
+            <div class="loading">Loading submissions...</div>
+          </div>
+
+        </section>
+
+        <!-- STORY DETAILS -->
+        <section class="panel detail-panel">
+
+          <div class="panel-heading">
+            <h2>Story Details</h2>
+            <span id="detailStatus">Select a story</span>
+          </div>
+
+          <div id="detailContent" class="detail-content">
+
+            <div class="empty-state">
+              <div class="empty-icon">📖</div>
+              <strong>No story selected</strong>
+              <p>Select a submission from the list to read it.</p>
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const API_URL = "/api/admin/submissions";
+
+  const listElement = document.getElementById("submissionList");
+  const detailElement = document.getElementById("detailContent");
+  const messageElement = document.getElementById("pageMessage");
+
+  const totalElement = document.getElementById("totalSubmissions");
+  const countElement = document.getElementById("submissionCount");
+  const listCountElement = document.getElementById("listCount");
+
+  const searchInput = document.getElementById("searchInput");
+  const statusFilter = document.getElementById("statusFilter");
+
+  let submissions = [];
+  let selectedId = null;
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]);
+  }
+
+  function getId(item) {
+    return item.id ?? item.submission_id;
+  }
+
+  function getName(item) {
+    return item.first_name ?? item.firstName ?? item.name ?? "Unknown";
+  }
+
+  function getAge(item) {
+    return item.age ?? "Not provided";
+  }
+
+  function getTitle(item) {
+    return item.story_title ?? item.storyTitle ?? item.title ?? "Untitled Story";
+  }
+
+  function getStory(item) {
+    return item.story_text ?? item.storyText ?? item.story ?? "";
+  }
+
+  function getEmail(item) {
+    return item.parent_email ?? item.parentEmail ?? "";
+  }
+
+  function getStatus(item) {
+    return String(item.status ?? "New");
+  }
+
+  function getDate(item) {
+    const raw = item.created_at ?? item.createdAt ?? item.submitted_at;
+    if (!raw) return "Date unavailable";
+
+    const date = new Date(raw.replace?.(" ", "T") ?? raw);
+
+    if (Number.isNaN(date.getTime())) return String(raw);
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  }
+
+  function showMessage(message, type = "error") {
+    messageElement.textContent = message;
+    messageElement.className = "message " + type;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function clearMessage() {
+    messageElement.textContent = "";
+    messageElement.className = "message";
+  }
+
+  async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: "same-origin",
+      ...options,
+      headers: {
+        ...(options.headers || {})
+      }
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      window.location.href = "login.html";
+      throw new Error("Your admin session has expired. Please log in again.");
+    }
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.error || "Something went wrong.");
+    }
+
+    return result;
+  }
+
+  function normalizeSubmissions(result) {
+    if (Array.isArray(result)) return result;
+    if (Array.isArray(result.submissions)) return result.submissions;
+    if (Array.isArray(result.data)) return result.data;
+    if (Array.isArray(result.results)) return result.results;
+
+    return [];
+  }
+
+  async function loadSubmissions() {
+    clearMessage();
+
+    listElement.innerHTML =
+      '<div class="loading">Loading submissions...</div>';
+
+    try {
+      const result = await apiRequest(API_URL);
+      submissions = normalizeSubmissions(result);
+
+      totalElement.textContent = submissions.length;
+      countElement.textContent = submissions.length;
+
+      renderList();
+
+      if (selectedId !== null) {
+        const selected = submissions.find(
+          item => String(getId(item)) === String(selectedId)
+        );
+
+        if (selected) {
+          showDetails(selected);
+        } else {
+          selectedId = null;
+          showEmptyDetails();
+        }
+      }
+
+    } catch (error) {
+      listElement.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <strong>Unable to load stories</strong>
+          <p>${escapeHTML(error.message)}</p>
+        </div>
+      `;
+
+      showMessage(error.message);
+    }
+  }
+
+  function renderList() {
+    const query = searchInput.value.trim().toLowerCase();
+    const filter = statusFilter.value;
+
+    const filtered = submissions.filter(item => {
+      const searchable = [
+        getTitle(item),
+        getName(item),
+        getEmail(item)
+      ].join(" ").toLowerCase();
+
+      const matchesSearch = searchable.includes(query);
+
+      const status = getStatus(item).toLowerCase();
+      const matchesStatus =
+        filter === "all" || status === filter;
+
+      return matchesSearch && matchesStatus;
+    });
+
+    listCountElement.textContent =
+      filtered.length + (filtered.length === 1 ? " story" : " stories");
+
+    if (!filtered.length) {
+      listElement.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✉️</div>
+          <strong>No stories found</strong>
+          <p>New visitor submissions will appear here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    listElement.innerHTML = filtered.map(item => {
+      const id = getId(item);
+      const status = getStatus(item);
+      const reviewed = status.toLowerCase() === "reviewed";
+
+      return `
+        <button
+          type="button"
+          class="submission-item ${String(id) === String(selectedId) ? "selected" : ""}"
+          data-id="${escapeHTML(id)}">
+
+          <span class="item-icon">📖</span>
+
+          <span class="item-content">
+            <span class="item-title">${escapeHTML(getTitle(item))}</span>
+
+            <span class="item-author">
+              ${escapeHTML(getName(item))} · Age ${escapeHTML(getAge(item))}
+            </span>
+
+            <span class="item-bottom">
+              <span class="item-date">${escapeHTML(getDate(item))}</span>
+              <span class="status ${reviewed ? "reviewed" : ""}">
+                ${escapeHTML(status)}
+              </span>
+            </span>
+          </span>
+
+        </button>
+      `;
+    }).join("");
+
+    listElement.querySelectorAll(".submission-item").forEach(button => {
+      button.addEventListener("click", () => {
+        const item = submissions.find(
+          entry => String(getId(entry)) === button.dataset.id
+        );
+
+        if (item) showDetails(item);
+      });
+    });
+  }
+
+  function showEmptyDetails() {
+    document.getElementById("detailStatus").textContent = "Select a story";
+
+    detailElement.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📖</div>
+        <strong>No story selected</strong>
+        <p>Select a submission from the list to read it.</p>
+      </div>
+    `;
+
+    renderList();
+  }
+
+  function showDetails(item) {
+    selectedId = getId(item);
+
+    const status = getStatus(item);
+    const reviewed = status.toLowerCase() === "reviewed";
+
+    document.getElementById("detailStatus").textContent = status;
+
+    detailElement.innerHTML = `
+      <div class="detail-top">
+
+        <div class="detail-title">
+          <div class="detail-book-icon">📖</div>
+
+          <div>
+            <h2>${escapeHTML(getTitle(item))}</h2>
+
+            <div class="detail-meta">
+              <span>👤 ${escapeHTML(getName(item))}</span>
+              <span>🎂 Age ${escapeHTML(getAge(item))}</span>
+              <span>📅 ${escapeHTML(getDate(item))}</span>
+            </div>
+          </div>
+        </div>
+
+        <span class="status ${reviewed ? "reviewed" : ""}">
+          ${escapeHTML(status)}
+        </span>
+
+      </div>
+
+      <hr class="detail-divider">
+
+      <div class="detail-section">
+        <h3>Parent / Guardian Email</h3>
+        <div class="email-box">
+          ${escapeHTML(getEmail(item) || "Not provided")}
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>Story</h3>
+        <div class="story-box">${escapeHTML(getStory(item))}</div>
+      </div>
+
+      <div class="detail-actions">
+        <button type="button" class="action-button pdf-button" id="makePdfButton">
+          ↓ Make PDF
+        </button>
+
+        <button type="button" class="action-button delete-button" id="deleteButton">
+          🗑 Delete Story
+        </button>
+      </div>
+    `;
+
+    document.getElementById("makePdfButton").addEventListener("click", () => {
+      makePDF(item);
+    });
+
+    document.getElementById("deleteButton").addEventListener("click", () => {
+      deleteSubmission(item);
+    });
+
+    renderList();
+  }
+
+  function makePDF(item) {
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+      showMessage("Please allow pop-ups to create your PDF.");
+      return;
+    }
+
+    const title = escapeHTML(getTitle(item));
+    const author = escapeHTML(getName(item));
+    const email = escapeHTML(getEmail(item));
+    const age = escapeHTML(getAge(item));
+    const date = escapeHTML(getDate(item));
+    const story = escapeHTML(getStory(item));
+
+    printWindow.document.open();
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${title} - Paper Trails</title>
+
+        <style>
+          body {
+            font-family: Georgia, serif;
+            max-width: 750px;
+            margin: 50px auto;
+            padding: 25px;
+            color: #173d36;
+            line-height: 1.8;
+          }
+
+          h1 {
+            color: #a91f50;
+            font-size: 30px;
+          }
+
+          .brand {
+            color: #a91f50;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+          }
+
+          .metadata {
+            padding: 15px;
+            background: #f7f4e9;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+          }
+
+          .story {
+            margin-top: 35px;
+            white-space: pre-wrap;
+            font-size: 17px;
+          }
+
+          footer {
+            margin-top: 60px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            font-size: 11px;
+            color: #777;
+            font-family: Arial, sans-serif;
+          }
+
+          @media print {
+            body {
+              margin: 0;
+              padding: 15px;
+            }
+          }
+        </style>
+      </head>
+
+      <body>
+        <div class="brand">PAPER TRAILS · STORIES THAT STAY</div>
+
+        <h1>${title}</h1>
+
+        <div class="metadata">
+          <strong>Author:</strong> ${author}<br>
+          <strong>Age group:</strong> ${age}<br>
+          <strong>Submitted:</strong> ${date}<br>
+          <strong>Parent / Guardian:</strong> ${email}
+        </div>
+
+        <div class="story">${story}</div>
+
+        <footer>
+          Paper Trails · A story written by a young author.
+        </footer>
+
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  }
+
+  async function deleteSubmission(item) {
+    const confirmed = window.confirm(
+      `Permanently delete "${getTitle(item)}"? This action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    clearMessage();
+
+    try {
+      const id = getId(item);
+
+      await apiRequest(
+        API_URL + "?id=" + encodeURIComponent(id),
+        { method: "DELETE" }
+      );
+
+      submissions = submissions.filter(
+        entry => String(getId(entry)) !== String(id)
+      );
+
+      selectedId = null;
+
+      totalElement.textContent = submissions.length;
+      countElement.textContent = submissions.length;
+
+      renderList();
+      showEmptyDetails();
+
+      showMessage("Story deleted successfully.", "success");
+
+    } catch (error) {
+      showMessage(error.message);
+    }
+  }
+
+  searchInput.addEventListener("input", renderList);
+  statusFilter.addEventListener("change", renderList);
+
+  document.getElementById("refreshButton").addEventListener(
+    "click",
+    loadSubmissions
+  );
+
+  document.getElementById("logoutButton").addEventListener(
+    "click",
+    async () => {
+      try {
+        await fetch("/api/logout", {
+          method: "POST",
+          credentials: "same-origin"
+        });
+      } finally {
+        window.location.href = "login.html";
+      }
+    }
+  );
+
+  loadSubmissions();
+
+})();
+</script>
+
+</body>
+</html>

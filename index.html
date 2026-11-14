@@ -143,7 +143,7 @@ blockquote.mini{margin:18px 0 26px;font:600 1.1rem var(--fun);color:var(--teal)}
 .book .by{font-size:.95rem;margin:0 0 10px;color:#555}
 .book .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .book .meta span{font:600 .78rem var(--fun);background:var(--butter);border-radius:999px;padding:.2em .7em}
-.book .actions{margin-top:auto;display:flex;gap:10px}
+.book .actions{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px}.book .actions .btn{justify-content:center}
 .empty{display:none;font:600 1.1rem var(--fun);color:var(--yellow)}
 
 /* steps */
@@ -219,6 +219,9 @@ dialog.reader::backdrop{background:rgba(6,46,46,.75)}
 .r-tools button{background:var(--teal2);color:#fff;border:0;border-radius:12px;padding:.45em .8em;font:600 .95rem var(--fun);cursor:pointer}
 .r-tools button:hover{background:var(--berry)}
 .r-page{padding:34px 44px;min-height:340px;font-size:var(--rsize,1.2rem);line-height:1.8;background:#fffdf6;margin:20px;border-radius:16px;box-shadow:inset 0 0 0 2px #eee3c4;white-space:pre-line}
+.r-page.pdf-view{padding:0;min-height:0;height:68vh;overflow:hidden;white-space:normal}
+.r-page.pdf-view iframe{display:block;width:100%;height:100%;min-height:420px;border:0;border-radius:16px;background:#fff}
+.r-foot button[hidden]{display:none}
 .r-foot{display:flex;align-items:center;justify-content:space-between;padding:0 22px 20px}
 .r-foot span{font:600 1rem var(--fun);color:var(--teal)}
 .r-mascot{width:64px}
@@ -254,6 +257,8 @@ html,body{overflow-x:clip}
 .hero-grid>*,.featured-grid>*,.write-grid>*,.about-grid>*,.contact-grid>*{min-width:0}
 .search{width:100%}
 @media (max-width:600px){.doodle{display:none}}
+.nav ul a.admin-upload-link{background:var(--berry);color:#fff;border:2px solid var(--teal);box-shadow:0 3px 0 var(--teal)}
+.nav ul a.admin-upload-link:hover{background:var(--orange);color:var(--teal)}
 </style>
 </head>
 <body>
@@ -274,6 +279,7 @@ html,body{overflow-x:clip}
         <li><a href="#about">About</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#contact">Contact</a></li>
+        <li><a href="admin/login.html" class="admin-upload-link">⬆ Upload</a></li>
       </ul>
     </nav>
   </div>
@@ -342,11 +348,17 @@ html,body{overflow-x:clip}
   <div class="wrap">
     <p class="eyebrow">The free library</p>
     <h2 id="lib-title" class="h-caps">More books by my lil writers</h2>
-    <div class="filters" role="group" aria-label="Filter books by type">
+    <div class="filters" role="group" aria-label="Filter books by genre">
       <button class="chip" aria-pressed="true" data-filter="all">All books</button>
       <button class="chip" aria-pressed="false" data-filter="funny">😂 Funny</button>
       <button class="chip" aria-pressed="false" data-filter="adventure">🗺️ Adventure</button>
       <button class="chip" aria-pressed="false" data-filter="friendship">💛 Friendship</button>
+      <button class="chip" aria-pressed="false" data-filter="fantasy">🪄 Fantasy</button>
+      <button class="chip" aria-pressed="false" data-filter="fiction">📚 Fiction</button>
+      <button class="chip" aria-pressed="false" data-filter="mystery">🔎 Mystery</button>
+      <button class="chip" aria-pressed="false" data-filter="romance">❤️ Romance</button>
+      <button class="chip" aria-pressed="false" data-filter="education">🎓 Education</button>
+      <button class="chip" aria-pressed="false" data-filter="other">✨ Other</button>
     </div>
     <div class="books" id="books"></div>
     <p class="empty" id="empty">No books match that yet. Maybe you should write it! ✍️</p>
@@ -380,7 +392,7 @@ html,body{overflow-x:clip}
       <div class="row2">
         <div class="field"><label for="f-name">Your first name</label><input id="f-name" required autocomplete="given-name"></div>
         <div class="field"><label for="f-age">Your age</label>
-          <select id="f-age" required><option value="">Choose…</option><option>6–8</option><option>9–11</option><option>12–14</option><option>15–17</option></select></div>
+          <select id="f-age" required><option value="">Choose…</option><option value="6–8">6–8</option><option value="9–11">9–11</option><option value="12–14">12–14</option><option value="15–17">15–17</option></select></div>
       </div>
       <div class="field"><label for="f-title">Story title</label><input id="f-title" required></div>
       <div class="field"><label for="f-story">Your story (or the start of it!)</label><textarea id="f-story" rows="6" required></textarea></div>
@@ -490,59 +502,232 @@ html,body{overflow-x:clip}
   <div class="r-foot">
     <button class="btn btn-sm" id="r-prev">← Back</button>
     <span id="r-count"></span>
+    <button class="btn btn-sm btn-lav" id="r-pdf" type="button" hidden>📄 Read full book</button>
+    <button class="btn btn-sm" id="r-back-preview" type="button" hidden>← Back to preview</button>
     <button class="btn btn-sm btn-yellow" id="r-next">Next →</button>
   </div>
 </dialog>
 
 <script>
-/* ===== BOOK DATA: add new books here. Replace each "pages" list with the real story text. ===== */
-const BOOKS=[
- {id:"ddd",title:"Dear Disputable Diaries",author:"Aryan & Esha",cover:"assets/dear-disputable-diaries.jpg",age:"7–13",tags:["funny"],label:"Funny",
-  pages:["Dear Disputable Diaries\nThe Twins Who Never Agree\n\nby Aryan & Esha","[Page 1: paste the first page of the story here.]","[Page 2: keep adding one page per item in this list.]"]},
- {id:"survival",title:"Survival",author:"Aadhvika, with Nikita Yadav",cover:"assets/survival.jpg",age:"8–12",tags:["adventure"],label:"Adventure",
-  pages:["Survival\nDumped into a different world, what's next?\n\nWritten by Aadhvika, with assistance from Nikita Yadav","[Page 1: paste the story text here.]"]},
- {id:"lrnd",title:"Love Right Next Door",author:"Olivia Nadal",cover:"assets/love-right-next-door.jpg",age:"9–13",tags:["friendship"],label:"Friendship",
-  pages:["Love Right Next Door\nThey were an unlikely pair.\n\nby Olivia Nadal","[Page 1: paste the story text here.]"]}
-];
+/* ===== Book data is loaded from the shared Paper Trails book API. ===== */
+let BOOKS=[];
 
 const $=s=>document.querySelector(s);
 document.getElementById('yr').textContent=new Date().getFullYear();
 
 /* library */
-let filter="all",query="";
-function render(){
-  const q=query.trim().toLowerCase();
-  const list=BOOKS.filter(b=>(filter==="all"||b.tags.includes(filter))&&(!q||(b.title+" "+b.author).toLowerCase().includes(q)));
-  $('#books').innerHTML=list.map(b=>`
-   <article class="book" itemscope itemtype="https://schema.org/Book">
-     <img src="${b.cover}" alt="Cover of ${b.title} by ${b.author}" width="400" height="600" loading="lazy" itemprop="image">
-     <h3 itemprop="name">${b.title}</h3>
-     <p class="by">by <span itemprop="author">${b.author}</span></p>
-     <div class="meta"><span>Ages ${b.age}</span><span>${b.label}</span><span>Free</span></div>
-     <div class="actions"><button class="btn btn-sm btn-orange" data-read="${b.id}">📖 Read free</button><a class="btn btn-sm" href="#stores">Buy now</a></div>
-   </article>`).join("");
-  $('#empty').style.display=list.length?"none":"block";
+let filter = "all", query = "";
+
+function escapeText(value = '') {
+  return String(value).replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
 }
-document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
-  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
-  c.setAttribute('aria-pressed','true');filter=c.dataset.filter;render();
-}));
-function doSearch(v){query=v;filter="all";document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.filter==="all"));render();$('#library').scrollIntoView();}
+
+function normalizeCategory(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function render() {
+  const q = query.trim().toLowerCase();
+
+  const list = BOOKS.filter(book => {
+    const matchesCategory =
+      filter === "all" ||
+      (book.tags || []).includes(filter);
+
+    const matchesSearch =
+      !q ||
+      (book.title + " " + book.author).toLowerCase().includes(q);
+
+    return matchesCategory && matchesSearch;
+  });
+
+  $('#books').innerHTML = list.map(book => `
+    <article class="book" itemscope itemtype="https://schema.org/Book">
+      <img
+        src="${escapeText(book.cover)}"
+        alt="Cover of ${escapeText(book.title)} by ${escapeText(book.author)}"
+        width="400"
+        height="600"
+        loading="lazy"
+        itemprop="image"
+      >
+      <h3 itemprop="name">${escapeText(book.title)}</h3>
+      <p class="by">
+        by <span itemprop="author">${escapeText(book.author)}</span>
+      </p>
+      <div class="meta">
+        <span>${escapeText(book.age)}</span>
+        <span>${escapeText(book.label)}</span>
+        <span>${escapeText(book.type || 'Free')}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-sm btn-orange" type="button" data-read="${escapeText(book.id)}">
+          📖 Read preview
+        </button>
+        <a class="btn btn-sm" href="#stores">Buy now</a>
+      </div>
+    </article>
+  `).join("");
+
+  $('#empty').style.display = list.length ? "none" : "block";
+}
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(button => {
+      button.setAttribute('aria-pressed', 'false');
+    });
+
+    chip.setAttribute('aria-pressed', 'true');
+    filter = chip.dataset.filter;
+    render();
+  });
+});
+
+function doSearch(value) {
+  query = value;
+  filter = "all";
+
+  document.querySelectorAll('.chip').forEach(button => {
+    button.setAttribute(
+      'aria-pressed',
+      button.dataset.filter === "all" ? "true" : "false"
+    );
+  });
+
+  render();
+  $('#library').scrollIntoView();
+}
 const urlQ=new URLSearchParams(location.search).get('q'); if(urlQ){$('#q').value=urlQ;query=urlQ;}
 render();
+
+async function loadPublicBooks(){
+  try{
+    const response=await fetch('/api/books');
+    if(!response.ok) throw new Error('Book service unavailable');
+    const data=await response.json();
+    BOOKS=(data.books||[]).map(b=>({
+      id:String(b.id),
+      title:b.title||'',
+      author:b.author||'',
+      cover:b.cover||'',
+      age:b.ageGroup||'',
+      tags:[normalizeCategory(b.genre)],
+      label:b.genre||'Story',
+      type:b.type||'Free',
+      hasPdf:Boolean(b.hasPdf),
+      pdfName:b.pdfName||'',
+      pages:[`${b.title||'Story'}\n\nby ${b.author||'Young Author'}\n\n${b.description||'The full story will be available here soon.'}`]
+    }));
+    render();
+  }catch(error){
+    $('#books').innerHTML='<p>We could not load the book library right now. Please refresh in a moment.</p>';
+    $('#empty').style.display='none';
+  }
+}
+loadPublicBooks();
+
+/* Secure PDF viewing inside the existing preview modal. */
+async function openBookPdf() {
+  if (!book || !book.hasPdf) return;
+
+  const button = $('#r-pdf');
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Loading PDF...";
+
+  try {
+    const response = await fetch(
+      `/api/book-download?id=${encodeURIComponent(book.id)}`,
+      {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        cache: "no-store",
+        credentials: "same-origin"
+      }
+    );
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result.success || !result.downloadUrl) {
+      throw new Error(result.error || `Unable to open this PDF (HTTP ${response.status}).`);
+    }
+
+    const pageContainer = $('#r-page');
+    pageContainer.classList.add('pdf-view');
+    pageContainer.textContent = '';
+
+    const frame = document.createElement('iframe');
+    frame.title = `PDF book: ${book.title}`;
+    frame.src = result.downloadUrl;
+    frame.setAttribute('loading', 'eager');
+    frame.setAttribute('allow', 'fullscreen');
+    pageContainer.appendChild(frame);
+
+    $('#r-prev').hidden = true;
+    $('#r-count').hidden = true;
+    $('#r-next').hidden = true;
+    $('#r-pdf').hidden = true;
+    $('#r-back-preview').hidden = false;
+    $('#r-smaller').hidden = true;
+    $('#r-bigger').hidden = true;
+    $('#r-speak').hidden = true;
+  } catch (error) {
+    console.error("Paper Trails PDF opening failed:", error);
+    alert(error.message || "Unable to open this PDF. Please try again.");
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+function returnToBookPreview() {
+  $('#r-page').classList.remove('pdf-view');
+  $('#r-pdf').hidden = !book?.hasPdf;
+  $('#r-back-preview').hidden = true;
+  $('#r-prev').hidden = false;
+  $('#r-count').hidden = false;
+  $('#r-next').hidden = false;
+  $('#r-smaller').hidden = false;
+  $('#r-bigger').hidden = false;
+  $('#r-speak').hidden = false;
+  show();
+}
 
 /* reader */
 const dlg=$('#reader');let book=null,page=0,size=1.2;
 function show(){
+  $('#r-page').classList.remove('pdf-view');
   $('#r-page').textContent=book.pages[page];
   $('#r-count').textContent=`Page ${page+1} of ${book.pages.length}`;
   $('#r-prev').disabled=page===0;
   $('#r-next').textContent=page===book.pages.length-1?"The End 🎉":"Next →";
+  $('#r-pdf').hidden=!book.hasPdf;
+  $('#r-back-preview').hidden=true;
+  $('#r-prev').hidden=false;
+  $('#r-count').hidden=false;
+  $('#r-next').hidden=false;
+  $('#r-smaller').hidden=false;
+  $('#r-bigger').hidden=false;
+  $('#r-speak').hidden=false;
 }
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-read]'); if(!t)return;
-  book=BOOKS.find(b=>b.id===t.dataset.read);page=0;$('#r-title').textContent=book.title;show();dlg.showModal();
+  book=BOOKS.find(b=>b.id===t.dataset.read);if(!book)return;page=0;$('#r-title').textContent=book.title;show();dlg.showModal();
 });
+$('#r-pdf').onclick=openBookPdf;
+$('#r-back-preview').onclick=returnToBookPreview;
 $('#r-next').onclick=()=>{if(page<book.pages.length-1){page++;show()}else dlg.close()};
 $('#r-prev').onclick=()=>{if(page>0){page--;show()}};
 $('#r-close').onclick=()=>dlg.close();
@@ -556,14 +741,109 @@ dlg.addEventListener('keydown',e=>{if(e.key==="ArrowRight")$('#r-next').click();
 const mb=$('.menu-btn');mb.onclick=()=>{const o=$('#menu').classList.toggle('open');mb.setAttribute('aria-expanded',o)};
 document.querySelectorAll('#menu a').forEach(a=>a.onclick=()=>{$('#menu').classList.remove('open');mb.setAttribute('aria-expanded',false)});
 
-/* submission → opens email to Paper Trails (swap for a form service later) */
-$('#submit-form').addEventListener('submit',e=>{
-  e.preventDefault();const f=e.target;
-  if(!f.checkValidity()){$('#f-msg').textContent="Oops! Please fill in every box and tick the parent checkbox.";return}
-  const body=`Name: ${$('#f-name').value}\nAge: ${$('#f-age').value}\nParent email: ${$('#f-parent').value}\n\nTitle: ${$('#f-title').value}\n\n${$('#f-story').value}`;
-  location.href=`mailto:nikitay172001@gmail.com?subject=${encodeURIComponent('Story submission: '+$('#f-title').value)}&body=${encodeURIComponent(body)}`;
-  $('#f-msg').textContent="Yay! Your email app is opening. Hit send and we'll read your story soon. 🎉";
-});
+
+/* submission → save story securely through the Vercel API */
+const submissionForm = document.getElementById("submit-form");
+
+if (submissionForm) {
+  // Assign one handler so this form has a single active submit routine.
+  submissionForm.onsubmit = async function (event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const message = form.querySelector("#f-msg");
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    const firstName = form.querySelector("#f-name")?.value.trim() || "";
+    const age = form.querySelector("#f-age")?.value.trim() || "";
+    const storyTitle = form.querySelector("#f-title")?.value.trim() || "";
+    const storyText = form.querySelector("#f-story")?.value.trim() || "";
+    const parentEmail = form.querySelector("#f-parent")?.value.trim() || "";
+    const consent = Boolean(form.querySelector("#f-ok")?.checked);
+
+    // Clear any previous message before validating this attempt.
+    message.textContent = "";
+
+    const missingFields = [];
+    if (!firstName) missingFields.push("First name");
+    if (!age) missingFields.push("Age");
+    if (!storyTitle) missingFields.push("Story title");
+    if (!storyText) missingFields.push("Story text");
+    if (!parentEmail) missingFields.push("Parent / guardian email");
+    if (!consent) missingFields.push("Guardian consent");
+
+    if (missingFields.length > 0) {
+      message.textContent = "Please complete: " + missingFields.join(", ") + ".";
+      message.style.color = "#B0285A";
+      console.log("Paper Trails form values:", {
+        firstNamePresent: Boolean(firstName),
+        age,
+        storyTitlePresent: Boolean(storyTitle),
+        storyTextPresent: Boolean(storyText),
+        parentEmailPresent: Boolean(parentEmail),
+        consent
+      });
+      return;
+    }
+
+    // Normalize dash characters so the dropdown value is accepted consistently.
+    const normalizedAge = age.replace(/[–—]/g, "-");
+    const allowedAges = ["6-8", "9-11", "12-14", "15-17"];
+
+    if (!allowedAges.includes(normalizedAge)) {
+      message.textContent = "Please select a valid age group.";
+      message.style.color = "#B0285A";
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(parentEmail)) {
+      message.textContent = "Please enter a valid parent or guardian email.";
+      message.style.color = "#B0285A";
+      return;
+    }
+
+    const payload = {
+      firstName,
+      age: age,
+      storyTitle,
+      storyText,
+      parentEmail,
+      consent
+    };
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending your story…";
+    message.textContent = "Please wait while we send your story safely.";
+    message.style.color = "#555";
+
+    try {
+      const response = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `Submission failed (HTTP ${response.status}).`);
+      }
+
+      form.reset();
+      message.textContent =
+        "Your story has been submitted successfully! Thank you for sharing it with Paper Trails. 🎉";
+      message.style.color = "#1F7A73";
+    } catch (error) {
+      console.error("Story submission failed:", error);
+      message.textContent = error.message || "Something went wrong. Please try again later.";
+      message.style.color = "#B0285A";
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "🚀 Send my story";
+    }
+  };
+}
 
 /* reveal on scroll */
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.12});

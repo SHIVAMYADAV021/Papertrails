@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== "production") {
 
 export const config = {
   runtime: "nodejs",
-  matcher: ["/admin/dashboard.html"]
+  matcher: ["/admin/dashboard.html", "/admin/books.html"]
 };
 
 export default function middleware(request) {

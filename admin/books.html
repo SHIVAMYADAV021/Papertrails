@@ -26,10 +26,22 @@
     </a>
 
     <nav class="sidebar-nav">
-      <a href="dashboard.html" class="nav-link">⌂ Dashboard</a>
-      <a href="books.html" class="nav-link active">📖 Books</a>
-      <a href="dashboard.html#genres" class="nav-link">🏷 Genres & Filters</a>
-      <a href="dashboard.html#submissions" class="nav-link">✉ Story Submissions</a>
+
+      <a href="dashboard.html" class="nav-link">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="books.html" class="nav-link active">
+        <span class="nav-icon">📖</span>
+        <span>Books</span>
+      </a>
+
+      <a href="submissions.html" class="nav-link">
+        <span class="nav-icon">✉</span>
+        <span>Story Submissions</span>
+      </a>
+
     </nav>
 
   </aside>
@@ -84,7 +96,6 @@
 
     </header>
 
-
     <!-- BOOKS PAGE -->
     <section class="books-page">
 
@@ -105,7 +116,6 @@
         </button>
 
       </div>
-
 
       <!-- STATISTICS -->
       <div class="stats-grid">
@@ -132,7 +142,6 @@
         </article>
 
       </div>
-
 
       <!-- BOOKS TABLE -->
       <article class="books-panel">
@@ -163,7 +172,6 @@
           </select>
 
         </div>
-
 
         <!-- TABLE -->
         <div class="table-wrapper">
@@ -203,7 +211,6 @@
 
 </div>
 
-
 <!-- ADD / EDIT BOOK MODAL -->
 <div class="book-modal" id="bookModal">
 
@@ -225,12 +232,10 @@
 
     </div>
 
-
     <!-- BOOK FORM -->
     <form class="book-form" id="bookForm">
 
       <input type="hidden" id="bookId">
-
 
       <!-- LEFT: COVER PREVIEW -->
       <div class="book-cover-column">
@@ -274,7 +279,6 @@
 
       </div>
 
-
       <!-- RIGHT: BOOK DETAILS -->
       <div class="book-fields-column">
 
@@ -290,7 +294,6 @@
           >
         </label>
 
-
         <label>
           Author(s) <span class="required-star">*</span>
 
@@ -303,7 +306,6 @@
           >
         </label>
 
-
         <label>
           Description
 
@@ -312,7 +314,6 @@
             placeholder="Write a short description about the book..."
           ></textarea>
         </label>
-
 
         <!-- SELECT FIELDS -->
         <div class="book-select-row">
@@ -332,7 +333,6 @@
             </select>
           </label>
 
-
           <label>
             Age Group <span class="required-star">*</span>
 
@@ -346,7 +346,6 @@
             </select>
           </label>
 
-
           <label>
             Type <span class="required-star">*</span>
 
@@ -358,7 +357,6 @@
 
         </div>
 
-
         <!-- COVER UPLOAD -->
         <label>
           Book Cover <span class="required-star">*</span>
@@ -369,7 +367,6 @@
             accept="image/jpeg,image/png,image/webp"
           >
         </label>
-
 
         <!-- PDF UPLOAD -->
         <div>
@@ -393,7 +390,6 @@
           </div>
 
         </div>
-
 
         <!-- FORM ACTIONS -->
         <div class="book-form-actions">
@@ -419,7 +415,6 @@
   </div>
 
 </div>
-
 
 <!-- COVER PREVIEW PLACEHOLDER -->
 <script>
@@ -452,7 +447,6 @@
 
   }
 </script>
-
 
 <!-- JAVASCRIPT -->
 <script src="js/dashboard.js"></script>

@@ -1,0 +1,17 @@
+PAPER TRAILS BOOK DATABASE CONNECTION
+
+This update connects the existing Admin Books screen to Cloudflare D1 through protected Vercel API routes.
+The public book list loads from the same database. Existing visual card markup and CSS are retained.
+
+Before deployment:
+1. Confirm Vercel Production environment variable WORKER_API_SECRET is saved (same secret as Cloudflare Worker).
+2. Run cloudflare-seed-existing-books.sql ONCE in Cloudflare D1 Console > paper-trails-db > Console to retain the three original public books.
+3. Deploy this project to Vercel from GitHub.
+
+Files added:
+- api/books.js (public book list)
+- api/admin/books.js (admin list + create)
+- api/admin/book.js (admin update + delete)
+- lib/worker-api.js (server-only Worker connection)
+
+PDF upload is not implemented in this connection; the existing PDF field remains metadata-only. Cover images are stored as data URLs in D1 for this initial working version. Use cover images under 900 KB.
